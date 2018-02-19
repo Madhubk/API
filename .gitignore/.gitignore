@@ -1,0 +1,50 @@
+using Microsoft.Owin.Security.OAuth;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace BanqAPI
+{
+    public class AuthenticationProvider : OAuthAuthorizationServerProvider
+    {
+        BanqAdminInformation BanqObj = new BanqAdminInformation();
+        public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+        {
+            string clientId;
+            string clientSecret;
+            context.TryGetFormCredentials(out clientId, out clientSecret);
+
+            if (!string.IsNullOrEmpty(clientId) && !string.IsNullOrEmpty(clientSecret))
+            {
+                //using (TodoEntities obj = new TodoEntities())
+                //{
+                //var user = obj.tblRegisters.Where(x => x.Email == clientId && x.Password == clientSecret).ToList();
+                var user = BanqObj.GetLogindetail(clientId, clientSecret);
+                if (user.Status == 0)
+                {
+                    context.Validated(clientId + "-" + user.RoleId + "-" + user.UserId + "-" + user.UserName);
+                }
+                else if(user.Status==1)
+                {
+                    context.SetError("1");
+                }
+                //}
+            }
+            return base.ValidateClientAuthentication(context);
+        }
+
+        public override Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+        {
+            var identity = new ClaimsIdentity(context.Options.AuthenticationType);
+            var list = context.ClientId.Split('-');            
+            identity.AddClaim(new Claim(ClaimTypes.Name, list[2]));
+            identity.AddClaim(new Claim(ClaimTypes.Role, list[1]));
+            identity.AddClaim(new Claim(ClaimTypes.Email, list[3]));
+            context.Validated(identity);
+            return base.GrantResourceOwnerCredentials(context);
+        }
+    }
+}
