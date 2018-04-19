@@ -1413,3 +1413,15 @@ dropdown items:
             return list;
 
         }
+
+
+
+getbaseurl:
+
+ public static string GetBaseUrl(this HttpRequestBase request)
+        {
+            if (request.Url == (Uri)null)
+                return string.Empty;
+            else
+                return request.Url.Scheme + "://" + request.Url.Authority + VirtualPathUtility.ToAbsolute("~/");
+        }
