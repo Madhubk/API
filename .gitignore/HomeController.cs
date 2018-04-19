@@ -1397,3 +1397,19 @@ namespace KYCExtraction.Controllers
 
     }
 
+
+
+dropdown items:
+
+        public static List<SelectListItem> GetsubQueryCategory(string CategoryId)
+        {
+            var d = obj.GetQuerySubCategory(CategoryId);
+            var list = d.Tables[0].AsEnumerable().Select(r => new SelectListItem
+            {
+                Text = r.Field<string>("SubCategoryDesc"),
+                Value = r.Field<int>("SubCategoryId").ToString()
+
+            }).ToList();
+            return list;
+
+        }
