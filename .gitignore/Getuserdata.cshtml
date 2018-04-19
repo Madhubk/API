@@ -1,0 +1,182 @@
+﻿@model CRM.Models.Response
+@{
+   // Layout = null;
+}
+
+<div class="textconfiguration">Caller Detail</div>
+          <hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" style="margin-top:10px;">
+            <div class="col-md-12">
+                <div class="form-inline">                     
+                    <div class="form-group">
+                        @*<label class="pass_faretextlbl">Mobile Number</label><span style="color: Red">*</span>*@
+                        @Html.TextBoxFor(m => m.Mobilenumber, new { @maxlength = "10", @class = "form-control form_datetime", placeholder = "Mobile No" })
+                        <div style="color: red;">
+                            @Html.ValidationMessageFor(m => m.Mobilenumber)
+                        </div>
+                    </div>
+                    <input type="button" class="btn btn-warning" value="Serach" name="btnsubmit" onclick="DoGetData()" />
+                </div>                         
+            </div>
+        </div>
+    </div>
+</div>
+   <hr />
+<div class="table-responsive" id="resulttbl" style="display:none">
+    <div class="panel" id="loginpaneldata">
+        <table id="Logindata" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Player Id</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>User Id</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Stockist Name</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Agent Name</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Fun Current Balance</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Real Current Balance</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Join Date-Time</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Login Date-Time</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>KYC Status</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Doc Status</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="panel">
+        <table id="AddMoneyData" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>
+                        player Id
+                    </td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Last Deposit</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Last Deposit Date</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="panel">
+        <table id="GamePlayData" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Table Id</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>User Name</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Round</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Point</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Status</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>hand</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Score</td>
+
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="panel">
+        <table id="TableData" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Table Id</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Table type</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Event Date-Time</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Prize Status</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Bet Amount</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Prize </td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Total Point</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="panel">
+        <table id="WithDrawData" class="table table-bordered">
+            <thead>
+                <tr>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Table Id</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Last WithDraw</td>
+                    <td style="background-color: rgb(18, 170, 217);font-weight:bold" ;>Last With DrawDate</td>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container">
+    <div id="divTab" style="margin-top:20px;">
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#resulttbl').hide();
+    })
+    function DoGetData() {
+
+        debugger
+        var MobileNo = document.getElementById('Mobilenumber').value;
+        if (MobileNo == "") {
+            bootbox.alert("Please Enter the Mobile Number");
+            return false;
+        }
+        $.ajax({
+            url: '@Url.Action("Getuserdatadetails", "Enquiry")',
+            type: 'GET',
+            contentType: "application/json;charset=utf-8",
+            data: { MobileNo: MobileNo },
+            success: function (data) {
+                var tr = '';
+                for (var i = 0; i < data.AddMoneyData.length ; i++) {
+                    tr += "<tr><td>" + data.AddMoneyData[i].PlayerID + "</td> <td>" + data.AddMoneyData[i].LastDeposit + "</td> <td>" + data.AddMoneyData[i].LastDepositDate + "</td> </tr>"
+                }
+                $('#AddMoneyData > tbody').html('')
+                $('#AddMoneyData > tbody').html(tr)
+                tr = '';
+                tr += "<tr><td>" + data.LoginData[0].PlayerID + "</td> <td>" + data.LoginData[0].UserID + "</td> <td>"
+                    + data.LoginData[0].StockistName + "</td> <td>" + data.LoginData[0].AgentName + "</td> <td>"
+                    + data.LoginData[0].FunCurrentBalance + "</td> <td>" + data.LoginData[0].RealCurrentBalance + "</td> <td>"
+                    + data.LoginData[0].JoinDateTime + "</td> <td>" + data.LoginData[0].LoginDateTime + "</td> <td>"
+                    + data.LoginData[0].KYCStatus + "</td> <td>" + data.LoginData[0].DocStatus + "</td> </tr>"
+                $('#Logindata > tbody').html('')
+                $('#Logindata > tbody').html(tr)
+                if (tr != '')
+                {
+                    $('#resulttbl').show();
+                }
+                tr = '';
+                for (var i = 0; i < data.GamePlayData.length ; i++) {
+                    tr += "<tr><td>" + data.GamePlayData[i].TableID + "</td> <td>" + data.GamePlayData[i].UserName + "</td> <td>" +
+                        data.GamePlayData[i].Round + "</td> <td>" + data.GamePlayData[i].Point + "</td> <td>"
+                        + data.GamePlayData[i].Status + "</td> <td>" + data.GamePlayData[i].hand
+                        + "</td> <td>" + data.GamePlayData[i].Score + "</td> </tr>"
+                }
+                $('#GamePlayData > tbody').html('')
+                $('#GamePlayData > tbody').html(tr)
+                tr = '';
+                for (var i = 0; i < data.TableData.length ; i++) {
+                    tr += "<tr><td>" + data.TableData[i].TableID + "</td> <td>" + data.TableData[i].Tabletype + "</td> <td>" +
+                        data.TableData[i].EventDateTime + "</td> <td>" + data.TableData[i].PrizeStatus + "</td> <td>"
+                        + data.TableData[i].BetAmount + "</td> <td>" + data.TableData[i].Prize
+                        + "</td> <td>" + data.TableData[i].TotalPoint + "</td> </tr>"
+                }
+                $('#TableData > tbody').html('')
+                $('#TableData > tbody').html(tr)
+                tr = '';
+                for (var i = 0; i < data.WithDrawData.length ; i++) {
+                    tr += "<tr><td>" + data.WithDrawData[i].PlayerID + "</td> <td>" + data.WithDrawData[i].LastWithDraw + "</td> <td>" +
+                        data.WithDrawData[i].LastWithDrawDate + "</td> </tr>"
+                }
+                $('#WithDrawData > tbody').html('')
+                $('#WithDrawData > tbody').html(tr)
+                $('#Mobilenumber').val(data.Mobilenumber);
+            }
+
+                });
+
+            }
+</script>
+
