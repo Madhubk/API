@@ -1,0 +1,3409 @@
+﻿@model SRBackofficeViewModel.LeadViewModel
+@{
+    ViewBag.Title = "AddLead";
+    Layout = "~/Views/Shared/_AuthorizeLayout.cshtml";
+}
+
+@*<style>
+        .mdialog {
+            margin-left: -338px;
+        }
+    </style>*@
+
+<link href="~/css/Customdatadatepicker.css" rel="stylesheet" />
+
+@if (TempData["AlertMessage"] != null)
+{
+
+    <div id="myModal" class="modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    @*<h4 class="modal-title">Modal Header</h4>*@
+                    <p>@TempData["AlertMessage"]&hellip;</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="closeModal btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+}
+
+@using (@Html.BeginForm("AddnewLead", "Lead", FormMethod.Post, new { id = "Leadform", @onsubmit = "return onSubmit(this)" }))
+{
+    <div class="center_content">
+        <div class="textregistration">
+           
+                <span>Lead Updation</span>
+           
+            <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("ManageLead","Lead")">Back</a>
+        </div>
+        <div class="container" id="AfterSucess">
+
+            <div style="color: Red; text-align: center">
+                <label id="errmsg">
+                </label>
+                @*@Html.AntiForgeryToken()*@
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Loan Details</a></li>
+                <li><a data-toggle="tab" href="#menu1">Personal Details</a></li>
+                <li><a data-toggle="tab" href="#menu2">Other</a></li>
+                <li><a data-toggle="tab" href="#Intrestdetails">Bank Details</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-top:20px">
+
+                            <div class="col-md-3">
+                                @*<div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Agent Name<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.AgentName, new { @class = "form-control", placeholder = "Enter the Agent Name " })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.AgentName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>*@
+
+                                @Html.HiddenFor(m => m.LeadId)
+                                <div class="form-group" id="leadelement">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Lead Date<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.LeadDate, new { @class = "form-control form_datetime", placeholder = "Enter the Lead Date" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.LeadDate, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Customer Name<span style="color: Red">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", placeholder = "Enter the Customer Name " })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Mobile No<span style="color: Red">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", placeholder = "Enter the Mobile Number " })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.MobileNo, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Email Id<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control", placeholder = "Enter the Email id " })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.EmailId, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <div class="input-group">
+                                        <div class="form-group">
+                                            <label for="InputName" style="color: #157BBE;">
+                                                Loan/Card<span style="color: Red"></span>
+                                            </label>
+                                            <div class="input-group">
+                                                @Html.RadioButtonFor(m => m.Purpose, (int)SRBackoffice.HelperClass.Ecommon.Loantype.Loan, new { @class = "radio-inline  i-checks", @onclick = "LoancardRadio(this);" })Loan
+                                                @Html.RadioButtonFor(m => m.Purpose, (int)SRBackoffice.HelperClass.Ecommon.Loantype.Card, new { @class = "radio-inline  i-checks", @onclick = "LoancardRadio(this);" })
+                                                Card
+                                            </div>
+                                            <div style="color: red;">
+                                                @Html.ValidationMessageFor(m => m.Purpose, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group" id="leadrjtreason">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Reason<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.Leadmobilenumberexistreason, new { @class = "form-control", placeholder = "Reason" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @*@Html.ValidationMessageFor(m => m.PurposeType, "", new { @class = "text-danger" })*@
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Loan Type<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.PurposeType, SRBackoffice.HelperClass.SelectedItems.GetLoanPurpose(), "--Select Loan--", new { @class = "form-control", @onchange = "GetLoanother(this)" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.PurposeType, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group" id="otherloantype">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Other Loan Type<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.otherloantype, new { @class = "form-control", placeholder = "Enter the other Loan Type" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.otherloantype, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div id="businessloandatadiv">
+                                  
+                                        <div class="form-group">
+
+                                            <label for="InputName" style="color: #157BBE;">
+                                                Do you have POS device?<span style="color: Red"></span>
+                                            </label>
+
+                                            @Html.CheckBoxFor(m => m.POS, new { @class = "checkbox", style = "height:10px; width10px;margin-top: -5px;" })
+                                        </div>
+                                    </div>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="form-group">
+                                            <label for="InputName" style="color: #157BBE;">
+                                                BT/Fresh<span style="color: Red"></span>
+                                            </label>
+                                            <div class="input-group">
+                                                @Html.RadioButtonFor(m => m.LoanType, (int)SRBackoffice.HelperClass.Ecommon.FreshBT.Fresh, new { @class = "radio-inline   i-checks", data_val = "false" })Fresh Loan
+                                                @Html.RadioButtonFor(m => m.LoanType, (int)SRBackoffice.HelperClass.Ecommon.FreshBT.BT, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                BT
+                                                @Html.RadioButtonFor(m => m.LoanType, (int)SRBackoffice.HelperClass.Ecommon.FreshBT.BTTopup, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                BT+Topup
+                                            </div>
+                                            <div style="color: red;">
+                                                @Html.ValidationMessageFor(m => m.LoanType, "", new { @class = "text-danger", data_val = "false" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Profession<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+
+                                        @Html.DropDownListFor(m => m.Profession, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "--Select Profession--", new { @class = "form-control edited", @onchange = "Gettext(this)" })
+
+                                        @*@Html.DropDownListFor(m => m.Profession, SRBackoffice.HelperClass.SelectedItems.GetProfession(), "--Select Profession--", new { @class = "form-control" })*@
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.Profession, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        LoanAmount<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.LoanAmount, new { @class = "form-control", placeholder = "Enter the Loan Amount", @maxlength = "10",  onkeypress = "return isNumberKey(event)" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.LoanAmount, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group" id="Salartpermonthdatadiv">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Salary per month<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.SalaryPerMonth, new { @class = "form-control", placeholder = "Enter the Salary Per Month" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.SalaryPerMonth, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="posDiv">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            POS Transcation<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.POSTranscation, new { @class = "form-control", placeholder = "POS Transcation" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.POSTranscation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Card Acceptance Vintage<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.DropDownListFor(m => m.CardAcceptanceVintage, SRBackoffice.HelperClass.SelectedItems.Getcardvintage(), "--Select Vintage--", new { @class = "form-control" })
+
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.CardAcceptanceVintage, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Minimum of six settlements per month<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.RadioButtonFor(m => m.settlements, (int)SRBackoffice.HelperClass.Ecommon.Loansettlements.Yes, new { @class = "radio-inline  i-checks", @onclick = "LoancardRadio(this);" })Yes
+                                            @Html.RadioButtonFor(m => m.settlements, (int)SRBackoffice.HelperClass.Ecommon.Loansettlements.No, new { @class = "radio-inline  i-checks", @onclick = "LoancardRadio(this);" })
+                                            No
+
+                                        </div>
+                                        <div style="color: red;">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div id="posbusinessloandatadiv">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Turn Over Per Year
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.TurnoverperMonth, new { @class = "form-control", placeholder = "Enter the Turnover per Month " })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.TurnoverperMonth, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Net Profit
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.NetProfit, new { @class = "form-control", placeholder = "Enter the Net Profit" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.NetProfit, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Do you have any collateral documents?<span style="color: Red"></span>
+                                    </label>
+
+                                    @Html.CheckBoxFor(m => m.Collateral, new { @class = "checkbox", style = "height:10px; width10px;margin-top: -5px;" })
+                                </div>
+                                <div id="collateralDiv">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Security Assets<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.DropDownListFor(m => m.Assestdesc, SRBackoffice.HelperClass.SelectedItems.GETSECURITYDETALISAssest(), "--Select--", new { @class = "form-control" })
+
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.Assestdesc, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Value
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.Securityvalue, new { @class = "form-control", placeholder = "Enter the Security value" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.Securityvalue, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        ITR Filed<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.DropDownListFor(m => m.ITRFiled, SRBackoffice.HelperClass.SelectedItems.GetITRYear(), "--Select--", new { @class = "form-control" })
+
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.ITRFiled, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Salary account/Current account name <span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.AccountBank, new { @class = "form-control", placeholder = "Enter  the  Bank Name" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.AccountBank, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Location
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.SecurityLocation, new { @class = "form-control", placeholder = "Enter the Security Location" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.SecurityLocation, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        ExistingEMI<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.ExistingEMI, new { @class = "form-control", placeholder = "Enter the Existing EMI" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.ExistingEMI, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Cards Out Standing<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CardsOutStanding, new { @class = "form-control", placeholder = "Enter the Cards Out Standing " })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CardsOutStanding, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+
+
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Company Name<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CompanyName, new { @class = "form-control", placeholder = "Enter the Company Name" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CompanyName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div id="Naturebusinessdata">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Nature of business
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.Natureofbusiness, new { @class = "form-control", placeholder = "Enter the Nature of business " })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.Natureofbusiness, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Company LandLine No
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CompanyLandline, new { @class = "form-control", placeholder = "Enter the CompanyLandline", onkeypress = "return isNumberKey(event)" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CompanyLandline, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Company Address
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextAreaFor(m => m.CompanyAddress, new { @class = "form-control", placeholder = "Enter the Company Address" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CompanyAddress, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Current Company Tenure
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.CurrentCompanyTenture, new { @class = "form-control", placeholder = "Enter the Current Company Tenure" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.CurrentCompanyTenture, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label for="InputName" style="color: #157BBE;">
+                                        Total Experience<span style="color: Red"></span>
+                                    </label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.TotalExperience, new { @class = "form-control", placeholder = "Enter  the Total Experience" })
+                                    </div>
+                                    <div style="color: red;">
+                                        @Html.ValidationMessageFor(m => m.TotalExperience, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+                    <div class="col-md-12" style="margin-top:20px">
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Alternative Mobile No
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.AlterMobileNo, new { @class = "form-control", placeholder = "Enter the  Alternative Mobile No" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.AlterMobileNo, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Date of Birth<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.DOB, new { @class = "form-control", placeholder = "Enter the  Date of Birth" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.DOB, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Age<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Age, new { @class = "form-control", placeholder = "Enter the Age", onkeypress = "return isNumberKey(event)" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.Age, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Marital Status<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.DropDownListFor(m => m.MaritalStatus, SRBackoffice.HelperClass.SelectedItems.GETMaritalStatus(), "--Select--", new { @class = "form-control" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.MaritalStatus, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Father's Name<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.FathersName, new { @class = "form-control", placeholder = "Enter the FathersName" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.FathersName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Pin code<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Pincode, new { @maxlength = "6", @class = "form-control", onkeypress = "return isNumberKey(event)", @onblur = "Getpincode(this)", placeholder = "Enter the Pin code" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.Pincode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Area<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+
+                                    @Html.DropDownListFor(m => m.Area, new SelectList(Enumerable.Empty<SelectListItem>(), "Area", "Area"), "Select Area", new { @class = "form-control edited" })
+
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.Area, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    State<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.DropDownListFor(m => m.State, new SelectList(Enumerable.Empty<SelectListItem>(), "State", "State"), "Select State", new { @class = "form-control edited" })
+                                    @*@Html.TextBoxFor(m => m.State, new { @class = "form-control", placeholder = "Enter the State" })*@
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.State, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    City<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.DropDownListFor(m => m.City, new SelectList(Enumerable.Empty<SelectListItem>(), "City", "City"), "Select City", new { @class = "form-control edited" })
+                                    @*@Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Enter the City" })*@
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Customer Address<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextAreaFor(m => m.CustomerAddress, new { @class = "form-control", placeholder = "Enter the Customer Address " })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.CustomerAddress, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    PAN No<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.PANNo, new { @class = "form-control", placeholder = "PAN No" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.PANNo, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Aadhar No<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.AadharNo, new { @maxlength = "12", @class = "form-control", placeholder = "AadharNo" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.AadharNo, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group" id="divCreditCard" style="display: none">
+                                <label for="InputName" style="color: #157BBE;">
+                                    Credit card outstanding<span style="color: Red"></span>
+                                </label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.Userid, new { @class = "form-control", placeholder = "Enter Credit card Outstanding" })
+                                </div>
+                                <div style="color: red;">
+                                    @Html.ValidationMessageFor(m => m.Userid, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="menu2" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="" style="margin-top:20px">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Address Proof<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.AddressProof, new { @class = "form-control", placeholder = "Enter the Address Proof" })
+                                            @Html.HiddenFor(m => m.AddressProofId)
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.AddressProof, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            ID Proof<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.IDProof, new { @class = "form-control", placeholder = "Enter the ID Proof" })
+                                            @Html.HiddenFor(m => m.IDProofid)
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.IDProof, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Other documents<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.otherdocuments, new { @class = "form-control", placeholder = "Enter the other documents" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.otherdocuments, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <div class="input-group">
+                                            <div class="form-group">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Bank Statement<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.RadioButtonFor(m => m.BankStatemnet, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", @onclick = "ExsistingResidentialRadio(this);", data_val = "false" })Yes
+                                                    @Html.RadioButtonFor(m => m.BankStatemnet, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", @onclick = "ExsistingResidentialRadio(this);", data_val = "false" })
+                                                    No
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.BankStatemnet, "", new { @class = "text-danger", data_val = "false" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="bankstatementdata">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Bank Statement Period<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.Period, SRBackoffice.HelperClass.SelectedItems.GetAllstatement(1), "--Select--", new { @class = "form-control" })
+                                                    @Html.HiddenFor(m => m.Periodid)
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.Periodid, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+
+                                        <div class="input-group">
+                                            <div class="form-group">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Photo<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.RadioButtonFor(m => m.Photo, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", data_val = "false" })Yes
+                                                    @Html.RadioButtonFor(m => m.Photo, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                    No
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.Photo, "", new { @class = "text-danger", data_val = "false" })
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group">
+
+                                        <div class="input-group">
+                                            <div class="form-group">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Credit card Statement<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.RadioButtonFor(m => m.CreditcardStatement, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", @onclick = "ExsistingResidentialdataRadio(this);", data_val = "false" })Yes
+                                                    @Html.RadioButtonFor(m => m.CreditcardStatement, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", @onclick = "ExsistingResidentialdataRadio(this);", data_val = "false" })
+                                                    No
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.CreditcardStatement, "", new { @class = "text-danger", data_val = "false" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="creditcardstatementdata">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Credit Card Statement Period<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.CPeriod, SRBackoffice.HelperClass.SelectedItems.GetAllstatement(2), "--Select--", new { @class = "form-control" })
+                                                    @Html.HiddenFor(m => m.CPeriodid)
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.Periodid, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+
+                                                <div class="input-group">
+                                                    <div class="form-group">
+                                                        <label for="InputName" style="color: #157BBE;">
+                                                            ITR Copy<span style="color: Red"></span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            @Html.RadioButtonFor(m => m.ITRCopy, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", @onclick = "ExsistingResidentialRadioITR(this);", data_val = "false" })Yes
+                                                            @Html.RadioButtonFor(m => m.ITRCopy, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", @onclick = "ExsistingResidentialRadioITR(this);", data_val = "false" })
+                                                            No
+                                                        </div>
+                                                        <div style="color: red;">
+                                                            @Html.ValidationMessageFor(m => m.ITRCopy, "", new { @class = "text-danger", data_val = "false" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="bankstatementdataITRcopydata">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    ITR Copy<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.ListBoxFor(m => m.ITRcopydatavalue, SRBackoffice.HelperClass.SelectedItems.GetITRcoypfield(), new { @class = "multiselect form-control ddlpackage", multiple = "multiple" })
+                                                    @Html.HiddenFor(m => m.ITRcopydata)
+
+                                                </div>
+                                                <div style="color: red;">
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="form-group">
+                                                        <label for="InputName" style="color: #157BBE;">
+                                                            Payslip<span style="color: Red"></span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            @Html.RadioButtonFor(m => m.Payslip, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", data_val = "false" })Yes
+                                                            @Html.RadioButtonFor(m => m.Payslip, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                            No
+                                                        </div>
+                                                        <div style="color: red;">
+                                                            @Html.ValidationMessageFor(m => m.Payslip, "", new { @class = "text-danger", data_val = "false" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <div class="form-group">
+                                                        <label for="InputName" style="color: #157BBE;">
+                                                            Own house<span style="color: Red"></span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            @Html.RadioButtonFor(m => m.Ownhouse, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", @onclick = "ExsistingResidentialRadio(this);", data_val = "false" })Yes
+                                                            @Html.RadioButtonFor(m => m.Ownhouse, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", @onclick = "ExsistingResidentialRadio(this);", data_val = "false" })
+                                                            No
+                                                        </div>
+                                                        <div style="color: red;">
+                                                            @Html.ValidationMessageFor(m => m.Ownhouse, "", new { @class = "text-danger", data_val = "false" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+
+                                </div>
+                                <div class="col-md-4">
+
+
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="form-group">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Any other Property<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.RadioButtonFor(m => m.AnyotherProperty, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", data_val = "false" })Yes
+                                                    @Html.RadioButtonFor(m => m.AnyotherProperty, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                    No
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.AnyotherProperty, "", new { @class = "text-danger", data_val = "false" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="form-group">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Offer Letter<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.RadioButtonFor(m => m.OfferLetter, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.Yes, new { @class = "radio-inline   i-checks", data_val = "false" })Yes
+                                                    @Html.RadioButtonFor(m => m.OfferLetter, (int)SRBackoffice.HelperClass.Ecommon.CommonStatus.No, new { @class = "radio-inline  i-checks", data_val = "false" })
+                                                    No
+                                                </div>
+                                                <div style="color: red;">
+                                                    @Html.ValidationMessageFor(m => m.OfferLetter, "", new { @class = "text-danger", data_val = "false" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Pickup Date<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.PickupDate, new { @class = "form-control", placeholder = "Enter the Pickup Date " })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.PickupDate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Pickup Pin code<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.PickupPincode, new { @maxlength = "6", @class = "form-control", onkeypress = "return isNumberKey(event)", @onblur = "GetPickupPincode(this)", placeholder = "Enter the Pin code" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.PickupPincode, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Pickup Area<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+
+                                            @Html.DropDownListFor(m => m.PickupArea, new SelectList(Enumerable.Empty<SelectListItem>(), "Area", "Area"), "Select Area", new { @class = "form-control edited" })
+
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.PickupArea, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            PickupTime<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.PickupTime, new { @class = "form-control", placeholder = "Enter the Pickup Time " })
+                                        </div>
+                                        @*@id = "datetimepicker3"*@
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.PickupTime, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Land Mark<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.LandMark, new { @class = "form-control", placeholder = "Enter the Land Mark" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @*@Html.ValidationMessageFor(m => m.LandMark, "", new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Pickup Address<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextAreaFor(m => m.PickupAddress, new { @class = "form-control", placeholder = "Enter the  Pickup Address" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @*@Html.ValidationMessageFor(m => m.PickupAddress, "", new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Application<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.Application, new { @class = "form-control", placeholder = "Application" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.Application, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4">
+
+
+
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Source<span style="color: Red"></span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.Source, new { @class = "form-control", placeholder = "Application Source" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.Source, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="row" id="LenderFlagdatalead">
+                                        <div class="form-group col-md-6" id="LoanLenderdrpdown">
+                                            <label for="InputName" style="color: #157BBE;">
+                                                Lender<span style="color: Red">*</span>
+                                            </label>
+                                            <div class="input-group">
+
+                                                @Html.DropDownListFor(m => m.LoanLender, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "--Select Lender--", new { @class = "form-control edited", @onchange = "GetLendertextdrp(this)" })
+
+                                                @*@Html.DropDownListFor(m => m.LoanLender, SRBackoffice.HelperClass.SelectedItems.GetLoanLender(1), "--Select Lender--", new { @class = "form-control", @onchange = "Gettext(this)" })*@
+                                                @Html.HiddenFor(m => m.LenderId)
+                                            </div>
+                                            <div style="color: red;">
+                                                @Html.ValidationMessageFor(m => m.LoanLender, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-md-6" id="otherlenderid">
+                                            <label for="InputName" style="color: #157BBE;">
+                                                Other Lender<span style="color: Red"></span>
+                                            </label>
+                                            <div class="input-group">
+                                                @Html.TextBoxFor(m => m.LenderOthers, new { @class = "form-control", placeholder = "Other Lender" })
+                                            </div>
+                                            <div style="color: red;">
+                                                @Html.ValidationMessageFor(m => m.LenderOthers, "", new { @class = "text-danger" })
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6" id="otherlenderDocid">
+                                            <label for="InputName" style="color: #157BBE;">
+                                                Lender Document<span style="color: Red"></span>
+                                            </label>
+                                            <div class="input-group">
+                                                @Html.DropDownListFor(m => m.Lender1ProofCollect, SRBackoffice.HelperClass.SelectedItems.GetLenderProofCollect(), "--Select--", new { @class = "form-control" })
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="form-group" id="Cardlenderdata">
+                                            <div class="form-group col-md-6">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Lender 1<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.AltLoanLender, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "--Select Lender--", new { @class = "form-control edited", @onchange = "GetLendertextdrp1(this)" })
+                                                    @*@Html.DropDownListFor(m => m.AltLoanLender, SRBackoffice.HelperClass.SelectedItems.GetLoanLender(1), "--Select Lender--", new { @class = "form-control", @onchange = "Gettext(this)" })*@
+                                                    @Html.HiddenFor(m => m.AltLenderId)
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Lender1 Document <span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.Lender2ProofCollect, SRBackoffice.HelperClass.SelectedItems.GetLenderProofCollect(), "--Select--", new { @class = "form-control" })
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Lender 2<span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.Alt2LoanLender, new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text"), "--Select Lender--", new { @class = "form-control edited", @onchange = "GetLendertextdrp2(this)" })
+                                                    @*@Html.DropDownListFor(m => m.Alt2LoanLender, SRBackoffice.HelperClass.SelectedItems.GetLoanLender(1), "--Select Lender--", new { @class = "form-control", @onchange = "Gettext(this)" })*@
+                                                    @Html.HiddenFor(m => m.Alt2LenderId)
+                                                </div>
+
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="InputName" style="color: #157BBE;">
+                                                    Lender2 Document <span style="color: Red"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    @Html.DropDownListFor(m => m.Lender3ProofCollect, SRBackoffice.HelperClass.SelectedItems.GetLenderProofCollect(), "--Select--", new { @class = "form-control" })
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="Approvependingleaddata">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Pending Lender Status<span style="color: Red">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.DropDownListFor(m => m.ApproveLenderid, SRBackoffice.HelperClass.SelectedItems.GetApproveLenderstatus(), "---Select Status---", new { @class = "form-control myinput", placeholder = "Pending Lender Status" })
+                                        </div>
+                                        <div style="color: red;">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Repayment Tenure
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.RepaymentTenure, new { @class = "form-control", placeholder = "Enter the Repayment Tenure" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.RepaymentTenure, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            CIBIL Score
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.CIBILScore, new { @class = "form-control", placeholder = "Enter the CIBIL Score" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.CIBILScore, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+
+
+
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Additional Income
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextBoxFor(m => m.AdditionalIncomeVal, new { @class = "form-control", placeholder = "Enter the Additional INcome" })
+                                        </div>
+                                        <div style="color: red;">
+                                            @Html.ValidationMessageFor(m => m.AdditionalIncomeVal, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="InputName" style="color: #157BBE;">
+                                            Remarks
+                                        </label>
+                                        <div class="input-group">
+                                            @Html.TextAreaFor(m => m.Remarksdata, new { @class = "form-control", placeholder = "Enter the Remarks" })
+                                        </div>
+                                        <div style="color: red;">
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="pull-right">
+                            <button type="submit" id="btnsubmit" class="savebtn">Submit</button>
+                            <button type="reset" class="btn btn-primary" id="btncancel">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="Intrestdetails" class="tab-pane fade">
+                    <div class="well-sm">
+                        <h4 id="loanHdr"></h4>
+                    </div>
+                    <table class="table table-bordered table-responsive" id="tblBankDetails" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th> Bank Name</th>
+                                <th>Rate of interest</th>
+                                <th>Age</th>
+                                <th>Max Tenure</th>
+                                <th>Max Loan Amount</th>
+                                <th>Cibil Score</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="well-sm">
+                        <h4>LAP interest details</h4>
+                    </div>
+                    <table class="table table-bordered table-responsive" id="tblLAPBankDetails" style="margin-top:20px">
+                        <thead>
+                            <tr>
+                                <th> Bank Name</th>
+                                <th>Rate of interest</th>
+                                <th>Age</th>
+                                <th>Max Tenure</th>
+                                <th>Max Loan Amount</th>
+                                <th>Cibil Score</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    @Html.HiddenFor(m => m.LenderId)
+    @Html.HiddenFor(m => m.AltLenderId)
+    @Html.HiddenFor(m => m.Alt2LenderId)
+    <input type="hidden" id="jsonString" />
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="~/Scripts/bootbox.js"></script>
+
+
+<link href="~/D2/bootstrap-datepicker.min.css" rel="stylesheet" />
+<link href="~/D2/bootstrap-datepicker.css" rel="stylesheet" />
+@*<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" rel="stylesheet" />*@
+<link href="~/Scripts/bootstrap-multiselect.css" rel="stylesheet" />
+@section scripts{
+
+    <script src="~/SRbjscss/js/bootbox.min.js"></script>
+    <script src="~/D2/Moment.js"></script>
+    <script src="~/D2/bootstrap-datetimepicker.js"></script>
+    <script src="~/D2/bootstrap-datepicker.min.js"></script>
+    <script src="~/D2/bootstrap-datepicker.js"></script>
+
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>*@
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+
+    <script src="~/Scripts/bootstrap-multiselect.js"></script>
+
+
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+    $(".closeModal").click(function () {
+
+        $('#myModal').hide();
+        // $("#myModal").show('hide');
+    });
+
+
+    $('#Leadform').on('keyup keypress', function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    function GetLenderEligibility() {
+        // $("#PurposeType option:selected").text()
+        // $('#tblBankDetails').DataTable();
+        if ($("#Profession").val() != "") {
+            $('#loanHdr').html($("#PurposeType option:selected").text() + " interest details");
+            $.ajax({
+                url: "@Url.Action("GetLenderEligibility", "Lead")",
+                type: "POST",
+                data: { LoanType: $("#PurposeType").val(), Salarytype: $("#Profession").val() },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    //  var jsonData = JSON.parse(resp);
+                    $("#tblBankDetails tbody").html('');
+                    $.each(resp, function (index, obj) {
+                        var row = '<tr><td> ' + obj.Bankname + ' </td><td>' + obj.Rateofinterest +
+                            '</td> <td>' + obj.Age + '</td><td>' + obj.Maxtenure +
+                            '</td><td>' + obj.Maxloanamount + '</td><td>' + obj.Cibilescore + '</td></tr>'
+                        $("#tblBankDetails tbody").append(row);
+
+                    });
+                }
+
+
+            });
+            GetLenderEligibilityLAP();
+        }
+    }
+    function GetLenderEligibilityLAP() {
+        // $("#PurposeType option:selected").text()
+        // $('#tblBankDetails').DataTable();
+        if ($("#Profession").val() != "") {
+            $.ajax({
+                url: "@Url.Action("GetLenderEligibilityLAP", "Lead")",
+                type: "POST",
+                data: { Salarytype: $("#Profession").val() },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    //  var jsonData = JSON.parse(resp);
+                    $("#tblLAPBankDetails tbody").html('');
+                    $.each(resp, function (index, obj) {
+                        var row = '<tr><td> ' + obj.Bankname + ' </td><td>' + obj.Rateofinterest +
+                            '</td> <td>' + obj.Age + '</td><td>' + obj.Maxtenure +
+                            '</td><td>' + obj.Maxloanamount + '</td><td>' + obj.Cibilescore + '</td></tr>'
+                        $("#tblLAPBankDetails tbody").append(row);
+
+                    });
+                }
+
+
+            });
+        }
+    }
+    $(document).ready(function () {
+
+        debugger
+
+
+
+        // $("#LoanLenderdrpdown").hide();
+
+
+        // GetLendertextdrp();
+        // GetLendertextdrp1();
+        // GetLendertextdrp2();
+        var bool1 = @Model.POS.ToString().ToLower();
+
+        if(bool1 == true)
+        {
+            debugger
+
+            $('#POS').prop('checked', true);
+            $("#posDiv").show();
+        }
+        else
+        {
+            $('#POS').prop('checked', false);
+            $("#posDiv").hide();
+        }
+
+        var Itrdata=@Model.ITRCopy;
+
+        if(Itrdata == 1)
+        {
+            $("#bankstatementdataITRcopydata").show();
+        }
+        else
+        {
+            $("#bankstatementdataITRcopydata").hide();
+        }
+        var bankstatedata=@Model.BankStatemnet;
+        if(bankstatedata == 1)
+        {
+            $("#bankstatementdata").show();
+        }
+        else
+        {
+            $("#bankstatementdata").hide();
+        }
+        var ccardstatementdata=@Model.CreditcardStatement;
+        if(ccardstatementdata == 1)
+        {
+            $("#creditcardstatementdata").show();
+        }
+        else
+        {
+            $("#creditcardstatementdata").hide();
+        }
+
+
+        GetLenderEligibility();
+        Getpincode();
+        Getcarddetailsvalue();
+        GetPickupPincode();
+        GetLoanother();
+        //Gettext();
+
+        // $("#posDiv").hide();
+        $("#businessloandatadiv").hide();
+        $("#posdatadatadiv").hide();
+        $("#leadelement").hide();
+        //  $("#bankstatementdata").hide();
+        // $("#creditcardstatementdata").hide();
+        $("#otherlenderid").hide();
+        $("#otherloantype").hide();
+
+        // $("#bankstatementdata").hide();
+        $("#Approvependingleaddata").hide();
+        $("#collateralDiv").hide();
+        // $("#ITRcopydatavalue").val('');
+
+        // $("#Period").val('');
+        // $("#CPeriod").val('');
+                 debugger
+        if(@Model.LenderFlag == 0)
+        {
+           
+
+            //$("#LoanLenderdrpdown").show();
+           
+            //$("#Cardlenderdata").show();
+            //$("#otherlenderDocid").show();
+            //$("#otherlenderid").hide();
+
+
+
+            $("LenderFlagdatalead").show();
+            $("#LoanLenderdrpdown").show();
+            $("#otherlenderid").hide();
+            $("#Cardlenderdata").show();
+            $("#otherlenderDocid").show();
+        }
+        else{
+            $("LenderFlagdatalead").hide();
+            $("#LoanLenderdrpdown").hide();
+            $("#otherlenderid").hide();
+            $("#Cardlenderdata").hide();
+            $("#otherlenderDocid").hide();
+            
+            
+            
+        }
+
+        $('#ITRcopydatavalue').multiselect({
+            includeSelectAllOption: true
+        });
+
+        var radioValue = $("input[id='Purpose']:checked").val();
+
+
+        // alert(radioValue);
+        if (radioValue == "1") {
+            // $("#LoanAmount").val('');
+            $("#Loanamountdatas").show();
+        }
+        else {
+            // $("#Loanamountdatas").hide();
+            $("#LoanAmount").val('0');
+        }
+
+    });
+
+    function onSubmit() {
+        debugger
+        var selected = $("#ITRcopydatavalue option:selected");
+        var InclusionInfo = "";
+        selected.each(function () {
+            InclusionInfo += $(this).val() + ",";
+        });
+        // alert(InclusionInfo);
+
+        if (InclusionInfo == "" || InclusionInfo == null) {
+
+            ITRcopydatavalue = ",";
+
+            $('#ITRcopydatavalue').val(InclusionInfo);
+            return true;
+        }
+        else
+        {
+            var selected = $("#ITRcopydatavalue option:selected");
+            var InclusionInfo = "";
+            selected.each(function () {
+                InclusionInfo += $(this).val() + ",";
+            });
+        }
+
+
+    }
+
+
+    $("#Collateral").change(function () {
+        debugger
+        if ($("#Collateral").is(":checked")) {
+
+            $("#posdatadatadiv").hide();
+
+            $("#businessloandatadiv").hide();
+            $("#collateralDiv").show();
+            $("#posbusinessloandatadiv").show();
+            $("#posDiv").hide();
+            //$("#PurposeType").val(4);
+
+
+            //alert('hi');
+
+        } else {
+
+            $("#posdatadatadiv").show();
+
+            $("#businessloandatadiv").show();
+            $("#collateralDiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#posDiv").show();
+            //$("#PurposeType").val(0);
+        }
+
+    });
+
+
+
+
+    $("#POS").change(function () {
+        debugger
+        if ($("#POS").is(":checked")) {
+
+            $("#posdatadatadiv").hide();
+
+            $("#businessloandatadiv").show();
+
+            $("#posbusinessloandatadiv").show();
+            $("#posDiv").show();
+
+            //alert('hi');
+
+        } else {
+
+            $("#posDiv").hide();
+        }
+    });
+
+
+    function GetLoanother() {
+        debugger
+
+        var otherloan = $("#PurposeType option:selected").text();
+
+        var otherloanvale = $("#PurposeType option:selected").val();
+        $.ajax({
+            url: "@Url.Action("GetLOanLenderdata", "Lead")",
+            type: "POST",
+            data: { LoanType: otherloanvale },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonData = JSON.parse(resp);
+                var s = JSON.stringify(jsonData);
+                //  console.log(jsonData);
+                $('#jsonString').val(s);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+
+                listItems += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+                    if (jsonData[i].Value == $('#LenderId').val()) {
+                        listItems += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                }
+
+
+
+                //listItems += "<option value='0'>--Select--</option>";
+                //for (var i = 0; i < jsonData.length; i++) {
+                //    listItems += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                //}
+                $("#LoanLender").html('');
+                $("#LoanLender").html(listItems);
+                // $("#LoanLender").val($('#LenderId').val())
+
+
+                listItems1 += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+
+                    if (jsonData[i].Value == $('#AltLenderId').val()) {
+                        listItems1 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems1 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+
+
+                    //listItems1 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                }
+
+                $("#AltLoanLender").html(listItems1);
+                $("#AltLoanLender").val($('#AltLenderId').val())
+
+
+
+                listItems2 += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+
+                    if (jsonData[i].Value == $('#Alt2LenderId').val()) {
+                        listItems2 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems2 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+
+                }
+
+                $("#Alt2LoanLender").html(listItems2);
+                $("#Alt2LoanLender").val($('#Alt2LenderId').val())
+
+
+
+                var val = $("#LoanLender").val();
+                var val2 = $("#LoanLender option:selected").text();
+                $("#AltLoanLender option[value='" + val + "']").remove();
+                $("#AltLoanLender option[Text='" + val2 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+                $("#LoanLender option[value='" + val1 + "']").remove();
+                $("#LoanLender option[Text='" + val12 + "']").remove();
+
+                var val1 = $("#AltLoanLender").val();
+                var val12 = $("#AltLoanLender option:selected").text();
+                $("#LoanLender option[value='" + val1 + "']").remove();
+                $("#LoanLender option[Text='" + val12 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val1 + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val12 + "']").remove();
+                $("#AltLoanLender option[value='" + val + "']").remove();
+                $("#AltLoanLender option[Text='" + val2 + "']").remove();
+
+                var val11 = $("#Alt2LoanLender").val();
+                var val112 = $("#Alt2LoanLender option:selected").text();
+                $("#LoanLender option[value='" + val11 + "']").remove();
+                $("#LoanLender option[Text='" + val112 + "']").remove();
+                $("#AltLoanLender option[value='" + val11 + "']").remove();
+                $("#AltLoanLender option[Text='" + val112 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+            }
+
+
+
+        });
+
+        if (otherloan == "Others") {
+            $("#otherloantype").show();
+        }
+        else {
+            $("#otherloantype").hide();
+            $("#businessloandatadiv").hide();
+        }
+        if (otherloan == "Loan Against Property") {
+            $("#collateralDiv").show();
+            $("#Collateral").prop('checked', true);
+            $("#businessloandatadiv").hide();
+        }
+        else {
+            $("#collateralDiv").hide();
+            $("#Collateral").prop('checked', false);
+        }
+        //Loan type Profession dropdown
+
+        var otherloanvale1 = $("#PurposeType option:selected").val();
+
+
+        if (otherloanvale1 == 1) {
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+                data: { LoanType: otherloanvale1 },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonDatapro = JSON.parse(resp);
+                    // console.log(jsonDatapro);
+
+                    var listItems = "";
+                    var listItems1 = "";
+                    var listItems2 = "";
+                    for (var i = 0; i < jsonDatapro.length; i++) {
+                        listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                    }
+                    $("#Profession").html(listItems);
+                    //$("#Profession").html(listItems);
+                    //$("#businessloandatadiv").hide();
+                    //$("#posbusinessloandatadiv").hide();
+                    //$("#Salartpermonthdatadiv").show();
+                    //$("#Naturebusinessdata").hide();
+                    var drpPurposeType = $("#PurposeType option:selected").val()
+                    var drprofessionvalue = $("#Profession option:selected").val()
+                    if(drprofessionvalue =="")
+                    {
+                        drprofessionvalue=@Model.Profession;
+                    }
+                    else
+                    {
+                        drprofessionvalue=drprofessionvalue;
+                    }
+                    if (drpPurposeType == 1 && drprofessionvalue == 8) {
+                        $("#Profession").html(listItems);
+                        $("#Profession").val('8');
+                        $("#businessloandatadiv").hide();
+                        $("#posbusinessloandatadiv").hide();
+                        $("#Salartpermonthdatadiv").show();
+                        $("#Naturebusinessdata").hide();
+                        $("#POS").prop("checked", false);
+                        $("#posDiv").hide();
+
+                        $("#TurnoverperMonth").val(0);
+                        $("#NetProfit").val(0);
+                    }
+                    else if (drpPurposeType == 1 && drprofessionvalue == 10) {
+
+                        $("#Profession").html(listItems);
+                        $("#Profession").val('10');
+                        $("#businessloandatadiv").hide();
+                        $("#posbusinessloandatadiv").show();
+                        $("#Salartpermonthdatadiv").hide();
+                        $("#Naturebusinessdata").show();
+                        $("#POS").prop("checked", false);
+                        $("#posDiv").hide();
+
+                        $("#SalaryPerMonth").val(0);
+                    }
+                }
+
+
+            });
+        }
+
+        else if (otherloanvale1 == 2)
+        {
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+                data: { LoanType: otherloanvale1 },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonDatapro = JSON.parse(resp);
+                    //console.log(jsonDatapro);
+
+                    var listItems = "";
+                    var listItems1 = "";
+                    var listItems2 = "";
+                    for (var i = 0; i < jsonDatapro.length; i++) {
+                        listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                    }
+
+                    $("#Profession").html(listItems);
+                    //$("#businessloandatadiv").show();
+                    //$("#posbusinessloandatadiv").show();
+                    //$("#Salartpermonthdatadiv").hide();
+                    //$("#Naturebusinessdata").show();
+                    //$("#SalaryPerMonth").val(0);
+
+                    var drpPurposeType = $("#PurposeType option:selected").val()
+                    var drprofessionvalue = $("#Profession option:selected").val()
+                    if(drprofessionvalue =="")
+                    {
+                        drprofessionvalue=@Model.Profession;
+                    }
+                    else
+                    {
+                        drprofessionvalue=drprofessionvalue;
+                    }
+                if (drpPurposeType == 2 && drprofessionvalue == 9) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('9');
+                        $("#businessloandatadiv").show();
+                        $("#posbusinessloandatadiv").show();
+                        $("#Salartpermonthdatadiv").hide();
+                        $("#Naturebusinessdata").show();
+
+                        $("#SalaryPerMonth").val(0);
+                    }
+                else if (drpPurposeType == 2 && drprofessionvalue == 10) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('10');
+                        $("#businessloandatadiv").show();
+                        $("#posbusinessloandatadiv").show();
+                        $("#Salartpermonthdatadiv").hide();
+                        $("#Naturebusinessdata").show();
+
+                        $("#SalaryPerMonth").val(0);
+                    }
+
+
+
+
+
+                }
+
+
+            });
+        }
+
+        else if (otherloanvale1 == 3)
+        {
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+                data: { LoanType: otherloanvale1 },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonDatapro = JSON.parse(resp);
+                    //console.log(jsonDatapro);
+
+                    var listItems = "";
+                    var listItems1 = "";
+                    var listItems2 = "";
+                    for (var i = 0; i < jsonDatapro.length; i++) {
+                        listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                    }
+                    $("#Profession").html(listItems);
+                    var drpPurposeType = $("#PurposeType option:selected").val()
+                    var drprofessionvalue = $("#Profession option:selected").val()
+                    if(drprofessionvalue =="")
+                    {
+                        drprofessionvalue=@Model.Profession;
+                    }
+                    else
+                    {
+                        drprofessionvalue=drprofessionvalue;
+                    }
+                    if (drpPurposeType == 3 && drprofessionvalue == 8) {
+                        $("#Profession").html(listItems);
+                        $("#Profession").val('8');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").hide();
+                    $("#Salartpermonthdatadiv").show();
+                    $("#Naturebusinessdata").hide();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+                    $("#TurnoverperMonth").val(0);
+                    $("#NetProfit").val(0);
+                }
+                    else if (drpPurposeType == 3 && drprofessionvalue == 9) {
+                        $("#Profession").html(listItems);
+                        $("#Profession").val('9');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+                    else if (drpPurposeType == 3 && drprofessionvalue == 10) {
+                        $("#Profession").html(listItems);
+                        $("#Profession").val('10');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+                    //$("#Profession").html(listItems);
+                    ////$("#businessloandatadiv").hide();
+                    ////$("#posbusinessloandatadiv").show();
+                    ////$("#Salartpermonthdatadiv").show();
+                    ////$("#Naturebusinessdata").show();
+                    //$("#businessloandatadiv").hide();
+                    //$("#posbusinessloandatadiv").hide();
+                    //$("#Salartpermonthdatadiv").show();
+                    //$("#Naturebusinessdata").hide();
+                    //$("#posDiv").hide();
+
+
+
+
+
+
+
+                }
+
+
+            });
+        }
+        else if (otherloanvale1 == 4)
+        {
+            debugger
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+            data: { LoanType: otherloanvale1 },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonDatapro = JSON.parse(resp);
+                //console.log(jsonDatapro);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+                for (var i = 0; i < jsonDatapro.length; i++) {
+                    listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                }
+
+                $("#Profession").html(listItems);
+                //$("#businessloandatadiv").show();
+                //$("#posbusinessloandatadiv").show();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").show();
+
+                //$("#businessloandatadiv").hide();
+                //$("#posbusinessloandatadiv").hide();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").hide();
+
+
+                var drpPurposeType = $("#PurposeType option:selected").val()
+                var drprofessionvalue = @Model.Profession;
+                if(drprofessionvalue =="")
+                {
+                    drprofessionvalue=@Model.Profession;
+                    }
+                    else
+                    {
+                        drprofessionvalue=drprofessionvalue;
+                    }
+
+                if (drpPurposeType == 4 && drprofessionvalue == 8) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('8');
+                        $("#businessloandatadiv").hide();
+                        $("#posbusinessloandatadiv").hide();
+                        $("#Salartpermonthdatadiv").show();
+                        $("#Naturebusinessdata").hide();
+                        $("#POS").prop("checked", false);
+                        $("#posDiv").hide();
+                        $("#TurnoverperMonth").val(0);
+                        $("#NetProfit").val(0);
+                    }
+                else if (drpPurposeType == 4 && drprofessionvalue == 9) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('9');
+                        $("#businessloandatadiv").hide();
+                        $("#posbusinessloandatadiv").show();
+                        $("#Salartpermonthdatadiv").hide();
+                        $("#Naturebusinessdata").show();
+                        $("#POS").prop("checked", false);
+                        $("#posDiv").hide();
+
+                        $("#SalaryPerMonth").val(0);
+                    }
+                else if (drpPurposeType == 4 && drprofessionvalue == 10) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('10');
+                        $("#businessloandatadiv").hide();
+                        $("#posbusinessloandatadiv").show();
+                        $("#Salartpermonthdatadiv").hide();
+                        $("#Naturebusinessdata").show();
+                        $("#POS").prop("checked", false);
+                        $("#posDiv").hide();
+                        $("#SalaryPerMonth").val(0);
+                    }
+
+
+
+
+
+
+
+                }
+
+
+            });
+
+            
+        }
+
+        else if (otherloanvale1 == 5)
+        {
+            debugger
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+            data: { LoanType: otherloanvale1 },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonDatapro = JSON.parse(resp);
+                //console.log(jsonDatapro);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+                for (var i = 0; i < jsonDatapro.length; i++) {
+                    listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                }
+                $("#Profession").html(listItems);
+               
+                //$("#businessloandatadiv").show();
+                //$("#posbusinessloandatadiv").show();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").show();
+
+                //$("#businessloandatadiv").hide();
+                //$("#posbusinessloandatadiv").hide();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").hide();
+
+
+                var drpPurposeType = $("#PurposeType option:selected").val()
+                var drprofessionvalue = @Model.Profession;
+                if(drprofessionvalue =="")
+                {
+                    drprofessionvalue=@Model.Profession;
+                }
+                else
+                {
+                    drprofessionvalue=drprofessionvalue;
+                }
+
+            
+                if (drpPurposeType == 5 && drprofessionvalue == 8) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('8');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").hide();
+                    $("#Salartpermonthdatadiv").show();
+                    $("#Naturebusinessdata").hide();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+                    $("#TurnoverperMonth").val(0);
+                    $("#NetProfit").val(0);
+                }
+                else if (drpPurposeType == 5 && drprofessionvalue == 9) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('9');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+                else if (drpPurposeType == 5 && drprofessionvalue == 10) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('10');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+
+
+
+
+
+
+
+            }
+
+
+        });
+
+            
+        }
+
+        else if (otherloanvale1 == 6)
+        {
+            debugger
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+            data: { LoanType: otherloanvale1 },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonDatapro = JSON.parse(resp);
+                //console.log(jsonDatapro);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+                for (var i = 0; i < jsonDatapro.length; i++) {
+                    listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                }
+
+                $("#Profession").html(listItems);
+                //$("#businessloandatadiv").show();
+                //$("#posbusinessloandatadiv").show();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").show();
+
+                //$("#businessloandatadiv").hide();
+                //$("#posbusinessloandatadiv").hide();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").hide();
+
+
+                var drpPurposeType = $("#PurposeType option:selected").val()
+                var drprofessionvalue = @Model.Profession;
+                if(drprofessionvalue =="")
+                {
+                    drprofessionvalue=@Model.Profession;
+                }
+                else
+                {
+                    drprofessionvalue=drprofessionvalue;
+                }
+
+            
+                if (drpPurposeType == 6 && drprofessionvalue == 8) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('8');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").hide();
+                    $("#Salartpermonthdatadiv").show();
+                    $("#Naturebusinessdata").hide();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+                    $("#TurnoverperMonth").val(0);
+                    $("#NetProfit").val(0);
+                }
+                else if (drpPurposeType == 6 && drprofessionvalue == 9) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('9');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+                else if (drpPurposeType == 6 && drprofessionvalue == 10) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('10');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+
+
+
+
+
+
+
+            }
+
+
+        });
+
+            
+}
+        else if (otherloanvale1 == 7)
+        {
+            debugger
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+            data: { LoanType: otherloanvale1 },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonDatapro = JSON.parse(resp);
+                //console.log(jsonDatapro);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+                for (var i = 0; i < jsonDatapro.length; i++) {
+                    listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                }
+
+               
+                $("#Profession").html(listItems);
+                //$("#businessloandatadiv").show();
+                //$("#posbusinessloandatadiv").show();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").show();
+
+                //$("#businessloandatadiv").hide();
+                //$("#posbusinessloandatadiv").hide();
+                //$("#Salartpermonthdatadiv").show();
+                //$("#Naturebusinessdata").hide();
+
+
+                var drpPurposeType = $("#PurposeType option:selected").val()
+                var drprofessionvalue = @Model.Profession;
+                if(drprofessionvalue =="")
+                {
+                    drprofessionvalue=@Model.Profession;
+                }
+                else
+                {
+                    drprofessionvalue=drprofessionvalue;
+                }
+
+            
+                if (drpPurposeType == 7 && drprofessionvalue == 8) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('8');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").hide();
+                    $("#Salartpermonthdatadiv").show();
+                    $("#Naturebusinessdata").hide();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+                    $("#TurnoverperMonth").val(0);
+                    $("#NetProfit").val(0);
+                }
+                else if (drpPurposeType == 7 && drprofessionvalue == 9) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('9');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+                else if (drpPurposeType == 7 && drprofessionvalue == 10) {
+                    $("#Profession").html(listItems);
+                    $("#Profession").val('10');
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").show();
+                    $("#Salartpermonthdatadiv").hide();
+                    $("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+
+                    $("#SalaryPerMonth").val(0);
+                }
+
+
+
+
+
+
+
+            }
+
+
+        });
+
+            
+}
+        else {
+            $.ajax({
+                url: "@Url.Action("GetProfessiondata", "Lead")",
+                type: "POST",
+                data: { LoanType: otherloanvale1 },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonDatapro = JSON.parse(resp);
+                    //  console.log(jsonDatapro);
+
+                    var listItems = "";
+                    var listItems1 = "";
+                    var listItems2 = "";
+                    for (var i = 0; i < jsonDatapro.length; i++) {
+                        listItems += "<option value='" + jsonDatapro[i].Value + "'>" + jsonDatapro[i].Text + "</option>";
+                    }
+
+                    $("#Profession").html(listItems);
+                    Gettext();
+                    //$("#businessloandatadiv").show();
+                    //$("#posbusinessloandatadiv").hide();
+                    //$("#Salartpermonthdatadiv").hide();
+                    //$("#Naturebusinessdata").show();
+                    $("#POS").prop("checked", false);
+                    $("#posDiv").hide();
+                    $("#businessloandatadiv").hide();
+                    $("#posbusinessloandatadiv").hide();
+                    $("#Salartpermonthdatadiv").show();
+                    $("#Naturebusinessdata").hide();
+
+
+
+
+
+
+
+                }
+
+
+            });
+        }
+
+    }
+
+
+
+
+
+    function GetLendertextdrp() {
+        debugger
+
+        //$("#LoanLender").val(ViewBag.Lenderid);
+        var AltLoanLenderval = $("#AltLoanLender").val();
+        var Alt2LoanLenderVal = $("#Alt2LoanLender").val();
+        $("#AltLoanLender").html('');
+        $("#Alt2LoanLender").html('');
+        var listItems4 = "";
+        var jsonData = JSON.parse($('#jsonString').val());
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == AltLoanLenderval) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#AltLoanLender").html(listItems4);
+        listItems4 = "";
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == Alt2LoanLenderVal) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#Alt2LoanLender").html(listItems4);
+
+
+
+        //var val = $("#LoanLender").val();
+
+        //var val2 = $("#LoanLender option:selected").text();
+
+        //$("#AltLoanLender option[value='" + val + "']").remove();
+        //$("#AltLoanLender option[Text='" + val2 + "']").remove();
+        //$("#Alt2LoanLender option[value='" + val + "']").remove();
+        //$("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+
+
+        var val = $("#LoanLender").val();
+        var val2 = $("#LoanLender option:selected").text();
+        if(val !=0)
+        {
+           
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+        }
+
+        var val1 = $("#AltLoanLender").val();
+        var val12 = $("#AltLoanLender option:selected").text();
+        if(val1 !=0)
+        {
+          
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val1 + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val12 + "']").remove();
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+        }
+
+        var val11 = $("#Alt2LoanLender").val();
+        var val112 = $("#Alt2LoanLender option:selected").text();
+        if(val11 !=0)
+        {
+           
+            $("#LoanLender option[value='" + val11 + "']").remove();
+            $("#LoanLender option[Text='" + val112 + "']").remove();
+            $("#AltLoanLender option[value='" + val11 + "']").remove();
+            $("#AltLoanLender option[Text='" + val112 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+        }
+    }
+
+    function GetLendertextdrp1() {
+        debugger
+        var LoanLenderval = $("#LoanLender").val();
+        var Alt2LoanLenderval = $("#Alt2LoanLender").val();
+        $("#LoanLender").html('');
+        $("#AltLoanLender2").html('');
+
+        var listItems4 = "";
+        var jsonData = JSON.parse($('#jsonString').val());
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == Alt2LoanLenderval) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#Alt2LoanLender").html(listItems4);
+        listItems4 = "";
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == LoanLenderval) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#LoanLender").html(listItems4);
+        //var val = $("#AltLoanLender").val();
+        //var val2 = $("#AltLoanLender option:selected").text();
+        //$("#Alt2LoanLender option[value='" + val + "']").remove();
+        //$("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+        //$("#LoanLender option[value='" + val + "']").remove();
+        //$("#LoanLender option[Text='" + val2 + "']").remove();
+        var val = $("#LoanLender").val();
+        var val2 = $("#LoanLender option:selected").text();
+        if(val !=0)
+        {
+           
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+        }
+
+        var val1 = $("#AltLoanLender").val();
+        var val12 = $("#AltLoanLender option:selected").text();
+        if(val1 !=0)
+        {
+          
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val1 + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val12 + "']").remove();
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+        }
+
+        var val11 = $("#Alt2LoanLender").val();
+        var val112 = $("#Alt2LoanLender option:selected").text();
+
+        if(val11 !=0)
+        {
+          
+            $("#LoanLender option[value='" + val11 + "']").remove();
+            $("#LoanLender option[Text='" + val112 + "']").remove();
+            $("#AltLoanLender option[value='" + val11 + "']").remove();
+            $("#AltLoanLender option[Text='" + val112 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+        }
+    }
+
+    function GetLendertextdrp2() {
+        debugger
+        var AltLoanLenderval = $("#AltLoanLender").val();
+        var LoanLenderVal = $("#LoanLender").val();
+        $("#AltLoanLender").html('');
+        $("#LoanLender").html('');
+        var listItems4 = "";
+        var jsonData = JSON.parse($('#jsonString').val());
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == AltLoanLenderval) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#AltLoanLender").html(listItems4);
+        listItems4 = "";
+        listItems4 += "<option value='0'>--Select Lender--</option>";
+        for (var i = 0; i < jsonData.length; i++) {
+            if (jsonData[i].Value == LoanLenderVal) {
+                listItems4 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+            else {
+                listItems4 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+            }
+        }
+
+
+        $("#LoanLender").html(listItems4);
+
+
+
+
+        //var val = $("#Alt2LoanLender").val();
+
+        //var val2 = $("#Alt2LoanLender option:selected").text();
+
+        //$("#LoanLender option[value='" + val + "']").remove();
+        //$("#LoanLender option[Text='" + val2 + "']").remove();
+        //$("#AltLoanLender option[value='" + val + "']").remove();
+        //$("#AltLoanLender option[Text='" + val2 + "']").remove();
+
+        var val = $("#LoanLender").val();
+        var val2 = $("#LoanLender option:selected").text();
+        if(val !=0)
+        {
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+        }
+        var val1 = $("#AltLoanLender").val();
+        var val12 = $("#AltLoanLender option:selected").text();
+        if(val1 !=0)
+        {
+            $("#LoanLender option[value='" + val1 + "']").remove();
+            $("#LoanLender option[Text='" + val12 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val1 + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val12 + "']").remove();
+            $("#AltLoanLender option[value='" + val + "']").remove();
+            $("#AltLoanLender option[Text='" + val2 + "']").remove();
+        }
+
+        var val11 = $("#Alt2LoanLender").val();
+        var val112 = $("#Alt2LoanLender option:selected").text();
+        if(val11 !=0)
+        {
+            $("#LoanLender option[value='" + val11 + "']").remove();
+            $("#LoanLender option[Text='" + val112 + "']").remove();
+            $("#AltLoanLender option[value='" + val11 + "']").remove();
+            $("#AltLoanLender option[Text='" + val112 + "']").remove();
+            $("#Alt2LoanLender option[value='" + val + "']").remove();
+            $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+        }
+
+    }
+    //function GetLendertextdrp() {
+    //    debugger
+    //    var val = $("#LoanLender").val();
+
+    //    var val2 = $("#LoanLender option:selected").text();
+
+    //    $("#AltLoanLender option[value='" + val + "']").remove();
+    //    $("#AltLoanLender option[Text='" + val2 + "']").remove();
+
+
+    //}
+
+    //function GetLendertextdrp1() {
+
+
+    //    var val = $("#AltLoanLender").val();
+
+    //    var val2 = $("#AltLoanLender option:selected").text();
+
+
+
+
+    //    $("#Alt2LoanLender option[value='" + val + "']").remove();
+    //    $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+
+    //}
+
+    //function GetLendertextdrp2() {
+
+    //    var val = $("#Alt2LoanLender").val();
+
+    //    var val2 = $("#Alt2LoanLender option:selected").text();
+
+    //    $("#LoanLender option[value='" + val + "']").remove();
+    //    $("#LoanLender option[Text='" + val2 + "']").remove();
+
+    //}
+
+
+
+    //function Gettext() {
+    //    GetLenderEligibility();
+    //    var drptext = $("#LoanLender option:selected").text();
+    //    if (drptext == "Others") {
+    //        $("#otherlenderid").show();
+    //    }
+    //    else {
+    //        $("#otherlenderid").hide();
+    //    }
+
+    //}
+
+
+
+
+
+
+
+
+    function Gettext() {
+        GetLenderEligibility();
+        debugger
+        // var drprofession = $("#Profession option:selected").text()
+
+
+        var drpPurposeType = $("#PurposeType option:selected").val()
+        var drprofessionvalue = $("#Profession option:selected").val()
+        if(drprofessionvalue =="")
+        {
+            drprofessionvalue=@Model.Profession;
+        }
+        else
+        {
+            drprofessionvalue=drprofessionvalue;
+        }
+        if (drpPurposeType == 1 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+
+
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 1 && drprofessionvalue == 10) {
+
+
+
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 2 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").show();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 2 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").show();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 3 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 3 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 3 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 4 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 4 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 4 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+
+
+        else if (drpPurposeType == 5 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 5 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 5 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+
+        else if (drpPurposeType == 6 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 6 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 6 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+
+        else if (drpPurposeType == 7 && drprofessionvalue == 8) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").show();
+            $("#Naturebusinessdata").hide();
+            $("#TurnoverperMonth").val(0);
+            $("#NetProfit").val(0);
+        }
+        else if (drpPurposeType == 7 && drprofessionvalue == 9) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+        else if (drpPurposeType == 7 && drprofessionvalue == 10) {
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").show();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+
+            $("#SalaryPerMonth").val(0);
+        }
+
+
+
+
+
+        else {
+            // $("#Profession").html(listItems);
+            $("#businessloandatadiv").hide();
+            $("#posbusinessloandatadiv").hide();
+            $("#Salartpermonthdatadiv").hide();
+            $("#Naturebusinessdata").show();
+            $("#SalaryPerMonth").val(0);
+        }
+
+
+        var drptext = $("#LoanLender option:selected").text();
+        if (drptext == "Others") {
+            $("#otherlenderid").show();
+        }
+        else {
+            $("#otherlenderid").hide();
+        }
+
+    }
+
+    function LoancardRadio(myRadio) {
+        debugger;
+
+        if (myRadio.value == "1") {
+
+            GetLoanother();
+            if(@Model.LenderFlag == 0)
+            {
+                $("LenderFlagdatalead").show();
+                $("#LoanLenderdrpdown").show();
+                $("#otherlenderid").hide();
+                $("#Cardlenderdata").show();
+                $("#otherlenderDocid").show();
+            }
+            else{
+                $("LenderFlagdatalead").hide();
+                $("#LoanLenderdrpdown").hide();
+                $("#otherlenderid").hide();
+                $("#Cardlenderdata").hide();
+                $("#otherlenderDocid").hide();
+            
+            
+            
+            }
+
+            //$("#Cardlenderdata").show();
+            $("#Loanamountdatas").show();
+            // $("#LoanLenderdrpdown").hide();
+            var Purposedata = myRadio.value;
+            var Mobilenodata = $('#MobileNo').val();
+
+
+            $.ajax({
+                url: "@Url.Action("GetMobilenumberdata", "Lead")",
+                type: "POST",
+                data: { Mobilenodata: Mobilenodata, Purposedata: Purposedata },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonData = JSON.parse(resp);
+                    // console.log(jsonData);
+
+                    if (jsonData.Status == 0) {
+                        // bootbox.alert(jsonData.StatusDesc);
+                    }
+                    else {
+                        bootbox.confirm({
+                            message: jsonData.StatusDesc,
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+
+                                if (result == true) {
+                                    $("#leadrjtreason").show();
+                                    // console.log('This was logged in the callback: ' + result);
+
+                                }
+                                else {
+                                    // console.log('This was logged in the callback: ' + result);
+
+                                }
+
+                            }
+                        });
+                    }
+
+
+
+                }
+            });
+
+
+        } else {
+            Getcarddetailsvalue();
+
+            if(@Model.LenderFlag == 0)
+            {
+                $("LenderFlagdatalead").show();
+                $("#LoanLenderdrpdown").show();
+                $("#otherlenderid").hide();
+                $("#Cardlenderdata").show();
+                $("#otherlenderDocid").show();
+            }
+            else{
+                $("LenderFlagdatalead").hide();
+                $("#LoanLenderdrpdown").hide();
+                $("#otherlenderid").hide();
+                $("#Cardlenderdata").hide();
+                $("#otherlenderDocid").hide();
+            
+            
+            
+            }
+
+           
+            $("#Loanamountdatas").hide();
+            $("#LoanAmount").val('0');
+            var Purposedata = myRadio.value;
+            $("#leadrjtreason").hide();
+            var Mobilenodata = $('#MobileNo').val();
+
+
+            $.ajax({
+                url: "@Url.Action("GetMobilenumberdata", "Lead")",
+                type: "POST",
+                data: { Mobilenodata: Mobilenodata, Purposedata: Purposedata },
+                dataType: "json",
+                success: function (resp) {
+                    //console.log(resp)
+                    var jsonData = JSON.parse(resp);
+                    // console.log(jsonData);
+                    if (jsonData.Status == 0) {
+                        // bootbox.alert(jsonData.StatusDesc);
+                    }
+                    else {
+                        bootbox.confirm({
+                            message: jsonData.StatusDesc,
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                //console.log('This was logged in the callback: ' + result);
+                            }
+                        });
+                    }
+
+
+
+                }
+            });
+
+
+
+        }
+
+    }
+    function ExsistingResidentialRadioITR(myRadio) {
+        debugger;
+        if (myRadio.value == "1") {
+            $("#bankstatementdataITRcopydata").show();
+        } else {
+            $("#bankstatementdataITRcopydata").hide();
+            $("#ITRcopydatavalue").val('');
+        }
+    }
+    function ExsistingResidentialRadio(myRadio) {
+        debugger;
+        if (myRadio.value == "1") {
+            $("#bankstatementdata").show();
+        } else {
+            $("#bankstatementdata").hide();
+            $("#Period").val('');
+        }
+    }
+
+    function ExsistingResidentialdataRadio(myRadio) {
+
+        if (myRadio.value == "1") {
+            $("#creditcardstatementdata").show();
+
+        } else {
+            $("#creditcardstatementdata").hide();
+            $("#CPeriod").val('');
+        }
+    }
+
+
+
+
+    // $(".form_datetime").datepicker({ dateFormat: "dd/mm/yy", autoclose: true }).datepicker('setDate', '');
+
+
+
+    $(".form_datetime").datepicker({ dateFormat: "dd/mm/yy", autoclose: true });
+
+    function setAge(d) {
+
+        var age = Math.floor(moment().diff(d, 'years', true));
+        $('#Age').val(age);
+
+    }
+    function CalcAge() {
+
+        setAge($('#DOB').val());
+    }
+    $('#DOB').datetimepicker({
+        format: 'DD/MM/YYYY',
+        sideBySide: false
+    });
+    $('#PickupDate').datetimepicker({
+        format: 'DD/MM/YYYY',
+        sideBySide: false
+    });
+    $('#DOB').on('dp.change', function (e) { setAge(e.date); })
+
+    //$('#DOB').datepicker({
+    //    onSelect: function (value, ui) {
+
+    //        var today = new Date(),
+    //            age = today.getFullYear() - ui.selectedYear;
+
+    //        $('#Age').val(age);
+    //    },
+    //    maxDate: '0',
+    //    changeMonth: true,
+    //    changeYear: true,
+    //    defaultDate: '-30yr',
+    //    dateFormat: "dd/mm/yy",
+    //});
+    // maxDate: '+0d',
+
+    function GetPickupPincode() {
+
+
+
+        var pin = $('#PickupPincode').val();
+
+        $.ajax({
+            url: "@Url.Action("Pincode", "Lead")",
+            type: "POST",
+            data: { Pincode: pin },
+            dataType: "json",
+            success: function (resp) {
+                // console.log(resp)
+                var jsonData = JSON.parse(resp);
+                // console.log(jsonData);
+                var listItems = "";
+
+                for (var i = 0; i < jsonData.Table.length; i++) {
+                    listItems += "<option value='" + jsonData.Table[i].Area + "'>" + jsonData.Table[i].Area + "</option>";
+                }
+
+                $("#PickupArea").html(listItems);
+
+
+
+
+
+            }
+        });
+    }
+
+
+
+    function Getcarddetailsvalue() {
+        debugger
+        var otherloan = $("#PurposeType option:selected").text();
+
+        //var otherloanvale = 0;
+        var otherloanvale = $("#PurposeType option:selected").val();
+
+
+
+
+        $.ajax({
+            url: "@Url.Action("GetLOanLenderdata", "Lead")",
+            type: "POST",
+            data: { LoanType: otherloanvale },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonData = JSON.parse(resp);
+                //  console.log(jsonData);
+
+                var listItems = "";
+                var listItems1 = "";
+                var listItems2 = "";
+
+                listItems += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+                    if (jsonData[i].Value == $('#LenderId').val()) {
+                        listItems += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                }
+
+
+
+                //listItems += "<option value='0'>--Select--</option>";
+                //for (var i = 0; i < jsonData.length; i++) {
+                //    listItems += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                //}
+                $("#LoanLender").html('');
+                $("#LoanLender").html(listItems);
+
+
+
+
+                listItems1 += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+
+                    if (jsonData[i].Value == $('#AltLenderId').val()) {
+                        listItems1 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems1 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+
+
+                    //listItems1 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                }
+
+                $("#AltLoanLender").html(listItems1);
+                $("#AltLoanLender").val($('#AltLenderId').val())
+
+
+
+                listItems2 += "<option value='0'>--Select Lender--</option>";
+                for (var i = 0; i < jsonData.length; i++) {
+
+                    if (jsonData[i].Value == $('#Alt2LenderId').val()) {
+                        listItems2 += "<option selected='selected' value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+                    else {
+                        listItems2 += "<option value='" + jsonData[i].Value + "'>" + jsonData[i].Text + "</option>";
+                    }
+
+                }
+
+                $("#Alt2LoanLender").html(listItems2);
+                $("#Alt2LoanLender").val($('#Alt2LenderId').val())
+
+
+                var val = $("#LoanLender").val();
+                var val2 = $("#LoanLender option:selected").text();
+                $("#AltLoanLender option[value='" + val + "']").remove();
+                $("#AltLoanLender option[Text='" + val2 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+                $("#LoanLender option[value='" + val1 + "']").remove();
+                $("#LoanLender option[Text='" + val12 + "']").remove();
+
+                var val1 = $("#AltLoanLender").val();
+                var val12 = $("#AltLoanLender option:selected").text();
+                $("#LoanLender option[value='" + val1 + "']").remove();
+                $("#LoanLender option[Text='" + val12 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val1 + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val12 + "']").remove();
+                $("#AltLoanLender option[value='" + val + "']").remove();
+                $("#AltLoanLender option[Text='" + val2 + "']").remove();
+
+                var val11 = $("#Alt2LoanLender").val();
+                var val112 = $("#Alt2LoanLender option:selected").text();
+                $("#LoanLender option[value='" + val11 + "']").remove();
+                $("#LoanLender option[Text='" + val112 + "']").remove();
+                $("#AltLoanLender option[value='" + val11 + "']").remove();
+                $("#AltLoanLender option[Text='" + val112 + "']").remove();
+                $("#Alt2LoanLender option[value='" + val + "']").remove();
+                $("#Alt2LoanLender option[Text='" + val2 + "']").remove();
+
+            }
+
+
+
+        });
+    }
+    function Getpincode() {
+
+        debugger
+
+        var pin = $('#Pincode').val();
+
+        $.ajax({
+            url: "@Url.Action("Pincode", "Lead")",
+            type: "POST",
+            data: { Pincode: pin },
+            dataType: "json",
+            success: function (resp) {
+                // console.log(resp)
+                var jsonData = JSON.parse(resp);
+                // console.log(jsonData);
+                var listItems = "";
+                var CityItems = "";
+                var StateItems = "";
+                for (var i = 0; i < jsonData.Table.length; i++) {
+                    listItems += "<option value='" + jsonData.Table[i].Area + "'>" + jsonData.Table[i].Area + "</option>";
+                }
+
+                $("#Area").html(listItems);
+
+
+                for (var i = 0; i < jsonData.Table1.length; i++) {
+                    CityItems += "<option value='" + jsonData.Table1[i].City + "'>" + jsonData.Table1[i].City + "</option>";
+                }
+
+                $("#City").html(CityItems);
+
+                for (var i = 0; i < jsonData.Table2.length; i++) {
+                    StateItems += "<option value='" + jsonData.Table2[i].State + "'>" + jsonData.Table2[i].State + "</option>";
+                }
+
+                $("#State").html(StateItems);
+
+
+            }
+        });
+    }
+
+    function GetMobiledata() {
+        debugger
+
+
+
+
+
+
+
+        var Purposedata = $('#Purpose').val('1');
+        var Mobilenodata = $('#MobileNo').val();
+
+
+        $.ajax({
+            url: "@Url.Action("GetMobilenumberdata", "Lead")",
+            type: "POST",
+            data: { Mobilenodata: Mobilenodata, Purposedata: Purposedata },
+            dataType: "json",
+            success: function (resp) {
+                //console.log(resp)
+                var jsonData = JSON.parse(resp);
+                // console.log(jsonData);
+
+                bootbox.alert(jsonData.StatusDesc);
+                //var listItems = "";
+                //var CityItems = "";
+                //var StateItems = "";
+                //for (var i = 0; i < jsonData.Table.length; i++) {
+                //    listItems += "<option value='" + jsonData.Table[i].Area + "'>" + jsonData.Table[i].Area + "</option>";
+                //}
+
+                //$("#Area").html(listItems);
+
+
+                //for (var i = 0; i < jsonData.Table1.length; i++) {
+                //    CityItems += "<option value='" + jsonData.Table1[i].City + "'>" + jsonData.Table1[i].City + "</option>";
+                //}
+
+                //$("#City").html(CityItems);
+
+                //for (var i = 0; i < jsonData.Table2.length; i++) {
+                //    StateItems += "<option value='" + jsonData.Table2[i].State + "'>" + jsonData.Table2[i].State + "</option>";
+                //}
+
+                //$("#State").html(StateItems);
+
+
+            }
+        });
+    }
+
+
+    $('.ddlpackage').multiselect({
+        includeSelectAllOption: true
+    });
+
+    $("#btncancel").click(function (event) {
+
+        event.preventDefault();
+        var url = '@Url.Action("ManageLead", "Lead")';
+        window.location.href = url;
+    });
+
+
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode != 46 && charCode > 31
+      && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#datetimepicker3').datetimepicker({
+                format: 'hh:mm A'
+            });
+        });
+
+
+
+
+
+
+        $(document).ready(function () {
+            $("#IDProof").autocomplete({
+                source: function (request, response) {
+                    debugger
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("AutosearchIDproff", "Home")",
+                        dataType: "json",
+                        data: { term: request.term },
+                        error: function (xhr, textStatus, errorThrown) {
+                            // alert('Error: ' + xhr.responseText);
+                        },
+                        success: function (data) {
+                            // debugger
+                            // console.log(data);
+                            if (data.length == 0) {
+                                bootbox.alert("Sorry, No matching Name found for " + request.term);
+                                this.input
+                                $(this).val("");
+                                $('#IDProof').val("");
+                                return;
+                            }
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.Text,
+                                    value: item.Value
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                // appendTo : _parentElement,
+                select: function (event, ui) {
+                    //  alert(ui.item.label);
+                    //  alert(ui.item.value);
+                    $('#IDProof').val(ui.item.label);
+                    $('#IDProofid').val(ui.item.value);
+                    return false;
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $("#AddressProof").autocomplete({
+                source: function (request, response) {
+                    debugger
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("Autosearchaddressproff", "Home")",
+                        dataType: "json",
+                        data: { term: request.term },
+                        error: function (xhr, textStatus, errorThrown) {
+                            // alert('Error: ' + xhr.responseText);
+                        },
+                        success: function (data) {
+                            debugger
+                            // console.log(data);
+                            if (data.length == 0) {
+                                bootbox.alert("Sorry, No matching Name found for " + request.term);
+                                this.input
+                                $(this).val("");
+                                $('#AddressProof').val("");
+                                return;
+                            }
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.Text,
+                                    value: item.Value
+                                }
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                // appendTo : _parentElement,
+                select: function (event, ui) {
+                    //  alert(ui.item.label);
+                    //  alert(ui.item.value);
+                    $('#AddressProof').val(ui.item.label);
+                    $('#AddressProofId').val(ui.item.value);
+                    return false;
+                }
+            });
+        });
+
+
+
+
+    </script>
+}
+
